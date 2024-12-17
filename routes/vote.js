@@ -1,26 +1,30 @@
 const express = require('express');
-
 const router = express.Router();
+const Vote = require('../models/vote');  // Assure-toi que le modèle 'Vote' est bien importé
 
-/* POST vote */
-router.post('/', (req, res) => {
-  req.database.collection('candidates').findOne({ name: req.body.candidate.name }, (err, candidate) => {
-    if (err) throw err;
+// Ajouter un vote
+router.post('/', async (req, res) => {
+  const { candidate_id, user_id } = req.body;
 
-    try {
-      req.database.collection('candidates').updateOne(
-        { _id: candidate._id }, // eslint-disable-line no-underscore-dangle
-        { $set: { votes: candidate.votes + 1 } }
-      );
+  try {
+    const newVote = new Vote({ candidate_id, user_id });
+    await newVote.save();
+    res.status(201).json({ message: 'Vote ajouté avec succès', vote: newVote });
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout du vote:', error);
+    res.status(500).json({ message: 'Erreur lors de l\'ajout du vote', error });
+  }
+});
 
-      req.database.collection('voters').insertOne({ _id: Number(req.body.voter.dni), ...req.body.voter }, (error) => {
-        if (error) throw error;
-      });
-      res.json({ success: true });
-    } catch (e) {
-      res.json({ success: false });
-    }
-  });
+// Récupérer tous les votes
+router.get('/', async (req, res) => {
+  try {
+    const votes = await Vote.find().populate('candidate_id').populate('user_id');
+    res.status(200).json(votes);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des votes:', error);
+    res.status(500).json({ message: 'Erreur lors de la récupération des votes', error });
+  }
 });
 
 module.exports = router;

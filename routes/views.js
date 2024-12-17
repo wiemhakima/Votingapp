@@ -1,10 +1,9 @@
 const express = require('express');
-
 const router = express.Router();
 
-/* GET home page. */
+// Page d'accueil
 router.get('/', (req, res) => {
-  res.render('index');
+  res.status(200).json({ message: 'Bienvenue sur la plateforme de vote' });
 });
 
 module.exports = router;

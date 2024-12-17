@@ -1,0 +1,1 @@
+"use strict";var e,t=(e=require("react"))&&"object"==typeof e&&"default"in e?e.default:e,r=require("./document-context");module.exports=function(){return t.createElement(r.Consumer,null,(function(e){return e}))};
