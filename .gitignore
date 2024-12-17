@@ -1,0 +1,6 @@
+# Ignore les fichiers de log
+*.log
+
+# Ignore les fichiers temporaires
+node_modules/
+.env
